@@ -1,0 +1,4 @@
+sysctl_config:
+  vm.swappiness: 0
+  net.ipv4.tcp_retries2: 8
+  net.ipv4.tcp_keepalive_time: 600

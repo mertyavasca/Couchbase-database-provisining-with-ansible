@@ -1,0 +1,99 @@
+   - name: Change kernel-settings
+     sysctl:
+       name: '{{ item.key }}'
+       value: '{{ item.value }}'
+       sysctl_set: true
+       state: present
+       reload: true
+       ignoreerrors: true
+     with_dict: '{{ sysctl_config }}'
+
+   - name: Stop and disable firewall service
+     service:
+       name: firewalld
+       state:  stopped
+       enabled:  false
+
+   - name: Create nosql group
+     group:
+      name: nosql
+
+   - name: Create couchbase user
+     user:
+      name: couchbase
+      group: nosql
+      createhome: true
+      home: /couchbase
+      shell: /bin/bash
+      comment: "couchbase server"
+      uid: 909
+      
+   - name: Change ownership of /couchbase directory
+     file:
+         path: /couchbase
+         owner: couchbase
+         group: nosql
+         recurse: true
+
+   - name: ulimit conf 
+     lineinfile:
+      path: /etc/security/limits.conf
+      line: "{{ item }}"
+      create: true
+     with_items: 
+       - 'couchbase   soft    nproc     10000'
+       - 'couchbase   hard    nproc     10000'
+       - 'couchbase   soft    nofile    200000'
+       - 'couchbase   hard    nofile    200000'
+
+
+   - name: Couchbase Installation | Copy rpm and installer file to remote /tmp
+     copy: 
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: couchbase
+      mode: 700
+     loop:
+      - src: /etc/ansible/files/cb-non-package-installer-x86_64
+        dest: /tmp/
+      - src: /etc/ansible/files/couchbase-server-enterprise-7.1.4-centos7.x86_64.rpm
+        dest: /tmp/
+
+   - name: Create .profile file
+     blockinfile:
+       path: /couchbase/.profile
+       block: |
+         PATH=$PATH:$HOME/.local/bin:$HOME/bin
+         # Couchbase Server
+         CB_HOME=/couchbase/opt/couchbase
+         export CB_HOME
+         PATH=$CB_HOME/bin:$PATH:.
+         export PATH
+
+
+   - name: Couchbase Installation | database install
+     become_user: couchbase
+     become_method: su
+     shell: |
+        . ~couchbase/.bash_profile
+        /tmp/cb-non-package-installer-x86_64 --install --install-location /couchbase/ --package /tmp/couchbase-server-enterprise-7.1.3-rhel8.x86_64.rpm
+            
+
+   - name: start couchbaseserver
+     become_user: couchbase
+     become_method: su
+     shell: |
+        . ~couchbase/.bash_profile
+        /couchbase/opt/couchbase/bin/couchbase-server --start	 
+
+   - name: couchbase status
+     become_user: couchbase
+     become_method: su
+     shell: |
+        . ~couchbase/.bash_profile
+        /couchbase/opt/couchbase/bin/couchbase-server --status
+     register: couchbase_status
+
+   - name: couchbase status
+     debug: 
+      msg: "{{couchbase_status.stdout}}"

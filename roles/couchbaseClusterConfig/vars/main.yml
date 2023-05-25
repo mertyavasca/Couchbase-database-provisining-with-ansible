@@ -1,0 +1,22 @@
+init_node: couchbaseserver1
+init_node_services : 
+  - data
+
+cluster_name: cbProdCluster
+cluster_ram_quota: 21000
+
+admin_user: Administrator
+admin_password: verysecretpass
+
+couchbase_servers_list:
+    - server: couchbaseserver2
+      services:
+        - data
+    - server: couchbaseserver3
+      services:
+        - index
+        - query
+    - server: couchbaseserver4
+      services:
+        - eventing
+

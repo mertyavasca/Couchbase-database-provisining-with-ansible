@@ -1,0 +1,15 @@
+init_node: couchbaseserver1
+
+index_quota: 4096
+data_quota: 8192
+analytics_quota: 4096
+eventing_quota: 2048
+
+bucket_list:
+    - bucket_name: cbBucket  # couchbase bucket name
+    - bucket_type: couchbase # couchbase, ephemeral or memcached
+    - durability_level: majority # none, majority, majorityAndPersistActive or persistToMajority
+    - bucket_ram_size: 500   # MB , min value 100
+    - bucket_replica: 1 # 0-3 
+    - compression_mode: off # off,pasive,active
+    - index_replica: 1 # 0 or 1

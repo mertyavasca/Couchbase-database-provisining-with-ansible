@@ -1,0 +1,16 @@
+- name: Install couchbase
+  hosts: all_nodes
+  become: true
+
+  roles:
+    - couchbaseInstall
+
+- name: Configure couchbase cluster and bucket
+  hosts: first_node
+  become: true
+  become_user: couchbase
+  become_method: su
+
+  roles:
+    - couchbaseClusterConfig
+    - couchbaseBucketConfig

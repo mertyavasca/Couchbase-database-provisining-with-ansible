@@ -1,0 +1,42 @@
+   - name: couchbase status
+     shell: |
+        . ~couchbase/.bash_profile
+        /couchbase/opt/couchbase/bin/couchbase-server --status
+     register: couchbase_status
+
+   - name: fail if couchbase server is not running
+     fail: 
+      msg: "{{couchbase_status.stdout}}"
+     when: couchbase_status.stdout != 'Couchbase Server is running'
+
+   - name: initialize a new couchbase cluster
+     shell: |
+        . ~couchbase/.bash_profile
+        /couchbase/opt/couchbase/bin/couchbase-cli cluster-init -c {{ init_node }}:8091 --cluster-username {{ admin_user }} --cluster-password {{ admin_password }} --services {{ init_node_services | join(",") }} --cluster-name {cluster_name}  
+
+   - name: add new couchbase server nodes to cluster
+     shell: |
+        . ~couchbase/.bash_profile
+        /opt/couchbase/bin/couchbase-cli server-add -c {{ init_node }}:8091 --username {{ admin_user }} --password {{ admin_password }} --server-add {{ item.server }}:8091 --services {{ item.services | join(",") }} --server-add-username {{ admin_user }} --server-add-password {{ admin_password }} 
+     with_items:
+       - "{{ couchbase_servers_list }}"
+
+   - name: rebalance cluster
+     shell: |
+        . ~couchbase/.bash_profile
+        /couchbase/opt/couchbase/bin/couchbase-cli rebalance -c {{ init_node }}:8091 --username {{ admin_user }} --password {{ admin_password }}
+     register: rebalance_status
+
+   - name: couchbase status
+     shell: |
+        . ~couchbase/.bash_profile
+        /couchbase/cb_home/opt/couchbase/bin/couchbase-cli server-list -c {{init_node}}:8091 --username {{ admin_user }} --password {{ admin_password }}
+     register: couchbase_cluster_health
+    
+   - name: rebalance output
+     debug:
+      msg: "{{rebalance_status.stdout_lines[1]}}"
+
+   - name: cluster output
+     debug:
+      msg: "{{couchbase_cluster_health.stdout_lines}}"
