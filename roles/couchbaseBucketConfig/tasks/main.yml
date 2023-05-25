@@ -44,7 +44,8 @@
      shell: |
        . ~couchbase/.bash_profile
        /couchbase/cb_home/opt/couchbase/bin/couchbase-cli server-list -c {{init_node}}:8091 --username {{admin_user}} --password {{admin_password}}
-     register: couchbase_cluster_hea   
+     register: couchbase_cluster_health   
+     
    - name: couchbase status
      debug:
       msg: "{{couchbase_cluster_health.stdout_lines}}"
