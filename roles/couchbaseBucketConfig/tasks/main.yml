@@ -7,7 +7,7 @@
    - name: couchbase status
      fail:
       msg: "{{couchbase_status.stdout}}"
-     when: couchbase_status.stdout != 'Couchbase Server is running  
+     when: couchbase_status.stdout != 'Couchbase Server is running'  
 
    - name: change index_quota
      shell: |
