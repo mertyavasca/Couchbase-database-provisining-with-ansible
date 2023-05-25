@@ -56,7 +56,7 @@
      loop:
       - src: /etc/ansible/files/cb-non-package-installer-x86_64
         dest: /tmp/
-      - src: /etc/ansible/files/{{couchbase_enterprise_rpm}}
+      - src: /etc/ansible/files/{{couchbase_rpm}}
         dest: /tmp/
 
    - name: Create .profile file
