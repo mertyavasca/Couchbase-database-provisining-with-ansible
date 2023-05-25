@@ -61,7 +61,7 @@
 
    - name: Create .profile file
      blockinfile:
-       path: /couchbase/.profile
+       path: /couchbase/.bash_profile
        block: |
          PATH=$PATH:$HOME/.local/bin:$HOME/bin
          # Couchbase Server
