@@ -1,4 +1,7 @@
-   - name: couchbase status
+ ---
+   ## this play initialize new couchbase cluster and add new nodes to cluster.
+  
+  - name: couchbase status ## check couchbase status, exit if it is not running.
      shell: |
         . ~couchbase/.bash_profile
         /couchbase/opt/couchbase/bin/couchbase-server --status
