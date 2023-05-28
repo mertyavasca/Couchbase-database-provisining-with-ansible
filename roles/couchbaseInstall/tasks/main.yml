@@ -1,3 +1,6 @@
+---
+   ##this play install couchbase server as non root user and start servers.
+   
    - name: Change kernel-settings
      sysctl:
        name: '{{ item.key }}'
