@@ -1,0 +1,15 @@
+[all:vars]
+ansible_user='root'
+
+[first_node]
+couchbaseserver1 ansible_host=172.18.9.10
+
+[other_nodes]
+couchbaseserver2 ansible_host=172.18.9.11
+couchbaseserver3 ansible_host=172.18.9.12
+couchbaseserver4 ansible_host=172.18.9.13
+
+
+[all_nodes:children]
+first_node
+other_nodes
