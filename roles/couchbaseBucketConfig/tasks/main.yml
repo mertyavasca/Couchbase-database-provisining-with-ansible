@@ -1,4 +1,6 @@
-   - name: couchbase status
+---   
+   ## This play configure cluster quotas for services and create buckets.
+   - name: couchbase status   ## Control for database status, exit if it is not running.
      shell: |
       . ~couchbase/.bash_profile
       /couchbase/cb_home/opt/couchbase/bin/couchbase-server --status
@@ -9,7 +11,7 @@
       msg: "{{couchbase_status.stdout}}"
      when: couchbase_status.stdout != 'Couchbase Server is running'  
 
-   - name: change index_quota
+   - name: change index_quota 
      shell: |
         . ~couchbase/.bash_profile
         couchbase-cli setting-cluster -c {{init_node}}:8091 --username {{admin_user}}  --password {{admin_password}} --cluster-index-ramsize {{index_quota}}
@@ -39,7 +41,8 @@
         couchbase-cli bucket-create --cluster {{init_node}}:8091 --username {{admin_user}} --password {{admin_password}} --bucket {{item.bucket_name}} --bucket-type {{item.bucket_type}} --durability-min-level {{item.durability_level}} --bucket-ramsize {{item.bucket_ram_size}} --bucket-replica {{item.bucket_replica}} --compression-mode {{item.compression_mode}} --enable-index-replica {{item.index_replica}}    
      with_items:
        - "{{ bucket_list }}"
-
+     when: item.bucket_name is defined   
+        
    - name: couchbase status
      shell: |
        . ~couchbase/.bash_profile
