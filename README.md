@@ -12,3 +12,4 @@ Ansible role for install and configure couchbase database on multiple server. In
     4. Satellite server can be used for deployment.
 
 
+![image](https://github.com/LexusNeira/Couchbase-database-provisining-with-ansible/assets/62284827/09f0f364-94d1-4043-9936-ec496927b181)
