@@ -5,7 +5,7 @@ Ansible role for install and configure couchbase database on multiple server. In
 
     1. This role is configured for non root installation
     
-    2. all servers must have /couchbase directory
+    2. all servers must have /couchbase directory, it is hardcoded you can change it directly.
     
     3. Related couchbase rpm and installer must be exist on Ansible source machine or you can download directly from official website if you have internet access from your database server.
     
